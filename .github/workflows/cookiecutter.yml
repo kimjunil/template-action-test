@@ -1,0 +1,28 @@
+name: Cookiecutter format
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  cookiecutter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        
+      - name: Cookiecutter format
+        uses: ./.github/actions/self-initialize-cookiecutter
+        with:
+          repo_name: ${{ github.event.repository.name }}
+          
+      - name: Create Pull Request
+        if: ${{ ! contains(github.event.repository.name, 'cookiecutter') }}
+        uses: peter-evans/create-pull-request@v3
+        with:
+          commit-message: "Cookiecutter format with repo_name as ${{ github.event.repository.name }}"
+          title: Cookiecutter format
+          body: |
+            Cookiecutter format with repo_name as ${{ github.event.repository.name }}
+          branch: cookiecutter-format
