@@ -22,12 +22,6 @@ runs:
     shell: bash
     run: |
       sudo apt-get install -y tree
-  - name: Format with cookiecutter
-    shell: bash
-    run: |
-      set -xe
-      printf '${{ inputs.repo_name }}\n' | cookiecutter .
-      ls -ltrah
   - name: Replace content with subdirectory's content
     shell: bash
     run: |
