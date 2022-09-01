@@ -22,10 +22,6 @@ runs:
     shell: bash
     run: |
       sudo apt-get install -y tree
-  - name: Install Cookiecutter and other pip modules
-    shell: bash
-    run: |
-      pip3 install -r requirements.txt
   - name: Format with cookiecutter
     shell: bash
     run: |
