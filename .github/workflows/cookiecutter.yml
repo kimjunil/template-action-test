@@ -18,7 +18,7 @@ jobs:
           repo_name: ${{ github.event.repository.name }}
           
       - name: Create Pull Request
-        if: ${{ ! contains(github.event.repository.name, 'cookiecutter') }}
+        if: ${{ ! contains(github.event.repository.name, 'template') }}
         uses: peter-evans/create-pull-request@v3
         with:
           commit-message: "Cookiecutter format with repo_name as ${{ github.event.repository.name }}"
