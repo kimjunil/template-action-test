@@ -1,0 +1,61 @@
+name: "self-initialize-cookiecutter"
+description: "Replace the code in this repository by formatting a cookiecutter template"
+author: Steven Miller
+
+inputs:
+  repo_name:
+    description: "What to use in the cookiecutter template for repository name?"
+    required: true
+
+runs:
+  using: composite
+  steps:
+  - name: Check repo_name
+    shell: bash
+    run: |
+      REGEX_REPO_NAME='^[a-z][a-z0-9-]{0,38}[a-z0-9]$'
+      if [[ ! ${{ inputs.repo_name }} =~ ${REGEX_REPO_NAME} ]]; then
+        echo "'repo_name' must match regex ${REGEX_REPO_NAME}"
+        exit 1
+      fi
+  - name: Install tree
+    shell: bash
+    run: |
+      sudo apt-get install -y tree
+  - name: Install Cookiecutter and other pip modules
+    shell: bash
+    run: |
+      pip3 install -r requirements.txt
+  - name: Format with cookiecutter
+    shell: bash
+    run: |
+      set -xe
+      printf '${{ inputs.repo_name }}\n' | cookiecutter .
+      ls -ltrah
+  - name: Replace content with subdirectory's content
+    shell: bash
+    run: |
+      set -xe
+      # Delete everything except the rendered content
+      find . -mindepth 1 ! -regex '\.\/${{ inputs.repo_name }}\/.*' ! -regex '^\./\.git\/.*' ! -name .git ! -name ${{ inputs.repo_name }} -delete
+      ls -ltrah
+  - name: Copy the rendered content to the top level of this repository
+    shell: bash
+    run: |
+      set -xe
+      cp -R ./${{ inputs.repo_name }}/* .
+      ls -ltrah
+  - name: Delete subdirectory
+    shell: bash
+    run: |
+      set -xe
+      rm -rf ./${{ inputs.repo_name }}
+      ls -ltrah
+  - name: Show results
+    shell: bash
+    run: |
+      set -xe
+      echo "===================="
+      echo "===================="
+      echo "===================="
+      tree -a .
